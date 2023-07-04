@@ -3,7 +3,21 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
+    public static void makeReservation(List<Room> rooms, Scanner scanner) {
 
+    }
+    public static void listFreeRooms(List<Room> rooms){
+
+    }
+    public static void checkoutRoom(List<Room> rooms, Scanner scanner){
+
+    }
+    public static void showBookingStats(List<Room> rooms){
+
+    }
+    public static void updateRoom(List<Room> rooms, Scanner scanner){
+
+    }
     public static void main(String[] args) {
         List<Room> rooms = createRooms();
 
@@ -22,7 +36,24 @@ public class Main {
             scanner.nextLine(); // Consume newline character
 
             switch (option) {
-
+                case 1:
+                    makeReservation(rooms, scanner);
+                    break;
+                case 2:
+                    listFreeRooms(rooms);
+                    break;
+                case 3:
+                    checkoutRoom(rooms, scanner);
+                    break;
+                case 4:
+                    showBookingStats(rooms);
+                    break;
+                case 5:
+                    updateRoom(rooms, scanner);
+                    break;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+                    break;
             }
         } while (option != 0);
     }
