@@ -4,20 +4,54 @@ import java.util.Scanner;
 
 public class Main {
     public static void makeReservation(List<Room> rooms, Scanner scanner) {
+        System.out.println("Enter start date (dd/mm/yyyy):");
+        String startDate = scanner.nextLine();
+
+        System.out.println("Enter end date (dd/mm/yyyy):");
+        String endDate = scanner.nextLine();
+
+        System.out.println("Enter number of beds:");
+        int beds = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.println("Rooms available for reservation:");
+        for (Room room : rooms) {
+            if (!room.isBooked() && room.getBeds() >= beds) {
+                System.out.println(room.getNumber() + " - " + room.getView());
+            }
+        }
+        System.out.println("Enter the room number to book:");
+        String roomNumber = scanner.nextLine();
+        System.out.println("Enter the name for the reservation:");
+        String name = scanner.nextLine();
+
+        for (Room room : rooms) {
+            if (room.getNumber().equals(roomNumber)) {
+                room.book(startDate, endDate, name);
+                System.out.println("Reservation successful!");
+                return;
+            }
+        }
+
+        System.out.println("Invalid room number. Reservation failed.");
+    }
+
+    public static void listFreeRooms(List<Room> rooms) {
 
     }
-    public static void listFreeRooms(List<Room> rooms){
+
+    public static void checkoutRoom(List<Room> rooms, Scanner scanner) {
 
     }
-    public static void checkoutRoom(List<Room> rooms, Scanner scanner){
+
+    public static void showBookingStats(List<Room> rooms) {
 
     }
-    public static void showBookingStats(List<Room> rooms){
+
+    public static void updateRoom(List<Room> rooms, Scanner scanner) {
 
     }
-    public static void updateRoom(List<Room> rooms, Scanner scanner){
 
-    }
     public static void main(String[] args) {
         List<Room> rooms = createRooms();
 
