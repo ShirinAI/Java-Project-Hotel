@@ -56,7 +56,6 @@ public class Main {
                 return;
             }
         }
-
     }
 
     public static void showBookingStats(List<Room> rooms) {
