@@ -56,14 +56,41 @@ public class Main {
                 return;
             }
         }
+        System.out.println("Invalid room number. Checkout failed.");
     }
 
     public static void showBookingStats(List<Room> rooms) {
-
+        System.out.println("Room booking stats:");
+        for (Room room : rooms) {
+            if (room.isBooked()) {
+                System.out.println(room.getNumber() + " - " + room.getBookedName());
+            }
+        }
     }
 
     public static void updateRoom(List<Room> rooms, Scanner scanner) {
+        System.out.println("Enter the room number to update:");
+        String roomNumber = scanner.nextLine();
 
+        for (Room room : rooms) {
+            if (room.getNumber().equals(roomNumber)) {
+                if (room.isBooked()) {
+                    System.out.println("Enter new start date (dd/mm/yyyy):");
+                    String startDate = scanner.nextLine();
+
+                    System.out.println("Enter new end date (dd/mm/yyyy):");
+                    String endDate = scanner.nextLine();
+
+                    room.updateReservation(startDate, endDate);
+                    System.out.println("Reservation updated!");
+                } else {
+                    System.out.println("Room is not currently booked.");
+                }
+                return;
+            }
+        }
+
+        System.out.println("Invalid room number. Update failed.");
     }
 
     public static void main(String[] args) {
