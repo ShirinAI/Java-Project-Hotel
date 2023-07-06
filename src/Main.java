@@ -37,10 +37,25 @@ public class Main {
     }
 
     public static void listFreeRooms(List<Room> rooms) {
-
+        System.out.println("Free rooms:");
+        for (Room room : rooms) {
+            if (!room.isBooked()) {
+                System.out.println(room.getNumber() + " - " + room.getView());
+            }
+        }
     }
 
     public static void checkoutRoom(List<Room> rooms, Scanner scanner) {
+        System.out.println("Enter the room number to checkout:");
+        String roomNumber = scanner.nextLine();
+
+        for (Room room : rooms) {
+            if (room.getNumber().equals(roomNumber) && room.isBooked()) {
+                room.checkout();
+                System.out.println("Checkout successful!");
+                return;
+            }
+        }
 
     }
 
