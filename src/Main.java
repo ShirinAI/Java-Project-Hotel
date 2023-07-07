@@ -28,14 +28,13 @@ public class Main {
         for (Room room : rooms) {
             if (room.getNumber().equals(roomNumber)) {
                 room.book(startDate, endDate, name);
-                System.out.println("Reservation successful!");
                 return;
             }
         }
 
         System.out.println("Invalid room number. Reservation failed.");
     }
-
+1
     public static void listFreeRooms(List<Room> rooms) {
         System.out.println("Free rooms:");
         for (Room room : rooms) {
