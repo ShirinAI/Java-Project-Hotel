@@ -8,7 +8,7 @@ public class Room {
     public String number;
     public int beds;
     public String view;
-    public List<String> bookedDates;
+
 //    public String bookedStartDate;
 //    public String bookedEndDate;
 //    public String bookedName;
@@ -37,7 +37,7 @@ public class Room {
         return bookings;
     }
     public boolean isBooked() {
-        return !bookedDates.isEmpty();
+        return !bookings.isEmpty();
     }
     public void book(LocalDate startDate, LocalDate endDate, String guestName){
         bookings.add(new Booking(startDate, endDate, guestName));

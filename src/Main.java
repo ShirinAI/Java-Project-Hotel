@@ -1,22 +1,22 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Main {
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     public static void makeReservation(List<Room> rooms, Scanner scanner) {
-        System.out.println("Enter start date (yyyy-mm-dd):");
-        LocalDate startDate = LocalDate.parse(scanner.nextLine());
+        System.out.println("Enter start date (dd.MM.yyyy):");
+        LocalDate startDate = LocalDate.parse(scanner.nextLine(), dateFormatter);
 
-        System.out.println("Enter end date (yyyy-mm-dd):");
-        LocalDate endDate = LocalDate.parse(scanner.nextLine());
+        System.out.println("Enter end date (dd.MM.yyyy):");
+        LocalDate endDate = LocalDate.parse(scanner.nextLine(), dateFormatter);
 
         System.out.println("Enter number of beds:");
         int beds = scanner.nextInt();
         scanner.nextLine();
-
-        System.out.println("Enter desired view(park/sea");
-        String view = scanner.nextLine();
 
         List<Room> availableRooms = findAvailableRooms(rooms, startDate, endDate, beds);
         if (availableRooms.isEmpty()) {
@@ -101,55 +101,103 @@ public class Main {
         }
     }
 
-    public static void checkoutRoom(List<Room> rooms, Scanner scanner) {
-        System.out.println("Enter the room number to checkout:");
-        String roomNumber = scanner.nextLine();
+    public static void checkoutRoom(Scanner scanner, List<Room> rooms) {
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        String formattedDate = today.format(formatter);
+
+        System.out.println("Booked rooms for today (" + formattedDate + "):");
+        boolean noBookings = true;
 
         for (Room room : rooms) {
-            if (room.getNumber().equals(roomNumber) && room.isBooked()) {
-                room.checkout();
-                System.out.println("Checkout successful!");
-                return;
+            for (Booking booking : room.getBookings()) {
+                if (booking.getStartDate().equals(today)) {
+                    System.out.println("Room " + room.getNumber() + " - Guest: " + booking.getGuestName());
+                    noBookings = false;
+                }
             }
         }
-        System.out.println("Invalid room number. Checkout failed.");
+
+        if (noBookings) {
+            System.out.println("No rooms are booked for today.");
+        }
+
+        System.out.println("Please select a room to checkout:");
+        String roomNumber = scanner.nextLine();
+
+        Room selectedRoom = findRoomByNumber(rooms, roomNumber);
+        if (selectedRoom != null) {
+            if (selectedRoom.isBooked()) {
+                selectedRoom.checkout();
+                System.out.println("Room " + selectedRoom.getNumber() + " checked out.");
+            } else {
+                System.out.println("Room " + selectedRoom.getNumber() + " is not booked.");
+            }
+        } else {
+            System.out.println("Invalid room number.");
+        }
     }
 
+
+
     public static void showBookingStats(List<Room> rooms) {
-        System.out.println("Room booking stats:");
+        System.out.println("Booking Stats:");
         for (Room room : rooms) {
             if (room.isBooked()) {
-      //          System.out.println(room.getNumber() + " - " + room.getBookedName());
+                System.out.println("Room " + room.getNumber() + " is booked by:");
+                for (Booking booking : room.getBookings()) {
+                    System.out.println("  Guest: " + booking.getGuestName() + ", Dates: " +
+                            booking.getStartDate() + " - " + booking.getEndDate());
+                }
             }
         }
     }
 
     public static void updateRoom(List<Room> rooms, Scanner scanner) {
-        System.out.println("Enter the room number to update:");
+        System.out.print("Enter the room number to update: ");
         String roomNumber = scanner.nextLine();
 
-        for (Room room : rooms) {
-            if (room.getNumber().equals(roomNumber)) {
-                if (room.isBooked()) {
-                    System.out.println("Enter new start date (dd/mm/yyyy):");
-                    LocalDate startDate = LocalDate.parse(scanner.nextLine());
-
-                    System.out.println("Enter new end date (dd/mm/yyyy):");
-                    LocalDate endDate = LocalDate.parse(scanner.nextLine());
-
-                    Booking.updateReservation(startDate, endDate);
-                    System.out.println("Reservation updated!");
-                } else {
-                    System.out.println("Room is not currently booked.");
+        Room selectedRoom = findRoomByNumber(rooms, roomNumber);
+        if (selectedRoom != null) {
+            if (selectedRoom.isBooked()) {
+                System.out.println("Current bookings for room " + selectedRoom.getNumber() + ":");
+                int index = 1;
+                for (Booking booking : selectedRoom.getBookings()) {
+                    System.out.println("Booking " + index + ": " +
+                            "Guest: " + booking.getGuestName() + ", Dates: " +
+                            booking.getStartDate() + " - " + booking.getEndDate());
+                    index++;
                 }
-                return;
-            }
-        }
 
-        System.out.println("Invalid room number. Update failed.");
+                System.out.print("Enter the booking number to update: ");
+                int bookingNumber = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+
+                if (bookingNumber >= 1 && bookingNumber <= selectedRoom.getBookings().size()) {
+                    Booking selectedBooking = selectedRoom.getBookings().get(bookingNumber - 1);
+                    System.out.print("Enter the new start date (dd.MM.yyyy): ");
+                    LocalDate newStartDate = LocalDate.parse(scanner.nextLine(), dateFormatter);
+
+                    System.out.print("Enter the new end date (dd.MM.yyyy): ");
+                    LocalDate newEndDate = LocalDate.parse(scanner.nextLine(), dateFormatter);
+
+                    selectedBooking.updateReservation(newStartDate, newEndDate);
+                    System.out.println("Room " + selectedRoom.getNumber() + ", Booking " + bookingNumber +
+                            " reservation updated.");
+                } else {
+                    System.out.println("Invalid booking number.");
+                }
+            } else {
+                System.out.println("Room " + selectedRoom.getNumber() + " is not booked.");
+            }
+        } else {
+            System.out.println("Invalid room number.");
+        }
     }
 
     public static void main(String[] args) {
+
+
         List<Room> rooms = createRooms();
         Scanner scanner = new Scanner(System.in);
         int option;
@@ -172,7 +220,7 @@ public class Main {
                     listFreeRooms(rooms);
                     break;
                 case 3:
-                    checkoutRoom(rooms, scanner);
+                    checkoutRoom(scanner, rooms);
                     break;
                 case 4:
                     showBookingStats(rooms);
