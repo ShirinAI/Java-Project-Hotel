@@ -1,5 +1,6 @@
 import javax.sound.sampled.FloatControl;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Booking {
     public LocalDate startDate;
@@ -24,5 +25,13 @@ public class Booking {
         this.startDate = newStartDate;
         this.endDate = newEndDate;
     }
+    public String getFormattedStartDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        return startDate.format(formatter);
+    }
 
+    public String getFormattedEndDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        return endDate.format(formatter);
+    }
 }

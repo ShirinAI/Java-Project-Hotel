@@ -1,3 +1,4 @@
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -6,12 +7,34 @@ import java.time.format.DateTimeFormatter;
 
 public class Main {
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
     public static void makeReservation(List<Room> rooms, Scanner scanner) {
+
         System.out.println("Enter start date (dd.MM.yyyy):");
-        LocalDate startDate = LocalDate.parse(scanner.nextLine(), dateFormatter);
+        LocalDate startDate = null;
+        boolean validStartDate = false;
+        while (!validStartDate) {
+            String startDateInput = scanner.nextLine();
+            try {
+                startDate = LocalDate.parse(startDateInput, dateFormatter);
+                validStartDate = true;
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Please enter the date in the format dd.MM.yyyy:");
+            }
+        }
 
         System.out.println("Enter end date (dd.MM.yyyy):");
-        LocalDate endDate = LocalDate.parse(scanner.nextLine(), dateFormatter);
+        LocalDate endDate = null;
+        boolean validEndDate = false;
+        while (!validEndDate) {
+            String endDateInput = scanner.nextLine();
+            try {
+                endDate = LocalDate.parse(endDateInput, dateFormatter);
+                validEndDate = true;
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Please enter the date in the format dd.MM.yyyy:");
+            }
+        }
 
         System.out.println("Enter number of beds:");
         int beds = scanner.nextInt();
@@ -40,27 +63,8 @@ public class Main {
                 System.out.println("Invalid room number.");
             }
         }
-
-//        System.out.println("Rooms available for reservation:");
-//        for (Room room : rooms) {
-//            if (!room.isBooked() && room.getBeds() >= beds) {
-//                System.out.println(room.getNumber() + " - " + room.getView());
-//            }
-//        }
-//        System.out.println("Enter the room number to book:");
-//        String roomNumber = scanner.nextLine();
-//        System.out.println("Enter the name for the reservation:");
-//        String name = scanner.nextLine();
-//
-//        for (Room room : rooms) {
-//            if (room.getNumber().equals(roomNumber)) {
-//              //  room.book(startDate, endDate, name);
-//                return;
-//            }
-//        }
-//
-//        System.out.println("Invalid room number. Reservation failed.");
     }
+
     public static Room findRoomByNumber(List<Room> rooms, String roomNumber) {
         for (Room room : rooms) {
             if (room.getNumber().equals(roomNumber)) {
@@ -73,7 +77,7 @@ public class Main {
     public static List<Room> findAvailableRooms(List<Room> rooms, LocalDate startDate, LocalDate endDate, int beds) {
         List<Room> availableRooms = new ArrayList<>();
         for (Room room : rooms) {
-            if (!room.isBooked() && room.getBeds() == beds) {
+            if (room.getBeds() == beds) {
                 if (!checkDateClash(room.getBookings(), startDate, endDate)) {
                     availableRooms.add(room);
                 }
@@ -138,7 +142,6 @@ public class Main {
     }
 
 
-
     public static void showBookingStats(List<Room> rooms) {
         System.out.println("Booking Stats:");
         for (Room room : rooms) {
@@ -146,7 +149,7 @@ public class Main {
                 System.out.println("Room " + room.getNumber() + " is booked by:");
                 for (Booking booking : room.getBookings()) {
                     System.out.println("  Guest: " + booking.getGuestName() + ", Dates: " +
-                            booking.getStartDate() + " - " + booking.getEndDate());
+                            booking.getFormattedStartDate() + " - " + booking.getFormattedEndDate());
                 }
             }
         }
@@ -195,8 +198,6 @@ public class Main {
     }
 
     public static void main(String[] args) {
-
-
         List<Room> rooms = createRooms();
         Scanner scanner = new Scanner(System.in);
         int option;
